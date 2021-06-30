@@ -13,6 +13,8 @@
 		09DAE51C2625D317005731EB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 09DAE51A2625D317005731EB /* Main.storyboard */; };
 		09DAE51E2625D318005731EB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09DAE51D2625D318005731EB /* Assets.xcassets */; };
 		09DAE5212625D318005731EB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 09DAE51F2625D318005731EB /* LaunchScreen.storyboard */; };
+		581F21E1268CC99D00268815 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 581F21E0268CC99D00268815 /* ViewController.swift */; };
+		581F21E5268D17FF00268815 /* FaceCropper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 581F21E4268D17FF00268815 /* FaceCropper.swift */; };
 		583668732688C99E008688D6 /* selfie-phone.json in Resources */ = {isa = PBXBuildFile; fileRef = 583668722688C99E008688D6 /* selfie-phone.json */; };
 		583668792688F900008688D6 /* FacesScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 583668782688F900008688D6 /* FacesScene.swift */; };
 		58691955268B943C00F32FF1 /* MemarkoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58691954268B943C00F32FF1 /* MemarkoManager.swift */; };
@@ -31,6 +33,8 @@
 		09DAE5202625D318005731EB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		09DAE5222625D318005731EB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		49A5A7B9DED0CB3D43F438B6 /* Pods-Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example.release.xcconfig"; path = "Target Support Files/Pods-Example/Pods-Example.release.xcconfig"; sourceTree = "<group>"; };
+		581F21E0268CC99D00268815 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		581F21E4268D17FF00268815 /* FaceCropper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceCropper.swift; sourceTree = "<group>"; };
 		583668722688C99E008688D6 /* selfie-phone.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "selfie-phone.json"; sourceTree = "<group>"; };
 		583668782688F900008688D6 /* FacesScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacesScene.swift; sourceTree = "<group>"; };
 		58691954268B943C00F32FF1 /* MemarkoManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemarkoManager.swift; sourceTree = "<group>"; };
@@ -71,6 +75,7 @@
 		09DAE5132625D317005731EB /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				581F21DF268CC97F00268815 /* Camera */,
 				583668722688C99E008688D6 /* selfie-phone.json */,
 				09DAE5142625D317005731EB /* AppDelegate.swift */,
 				09DAE5162625D317005731EB /* SceneDelegate.swift */,
@@ -84,6 +89,15 @@
 				5869195D268B9CB700F32FF1 /* Utils.swift */,
 			);
 			path = Source;
+			sourceTree = "<group>";
+		};
+		581F21DF268CC97F00268815 /* Camera */ = {
+			isa = PBXGroup;
+			children = (
+				581F21E0268CC99D00268815 /* ViewController.swift */,
+				581F21E4268D17FF00268815 /* FaceCropper.swift */,
+			);
+			path = Camera;
 			sourceTree = "<group>";
 		};
 		AF7948C6777726C80C00280A /* Pods */ = {
@@ -225,7 +239,9 @@
 				09DAE5192625D317005731EB /* AppController.swift in Sources */,
 				583668792688F900008688D6 /* FacesScene.swift in Sources */,
 				09DAE5152625D317005731EB /* AppDelegate.swift in Sources */,
+				581F21E1268CC99D00268815 /* ViewController.swift in Sources */,
 				09DAE5172625D317005731EB /* SceneDelegate.swift in Sources */,
+				581F21E5268D17FF00268815 /* FaceCropper.swift in Sources */,
 				5869195E268B9CB700F32FF1 /* Utils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

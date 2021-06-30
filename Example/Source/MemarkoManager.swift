@@ -16,6 +16,13 @@ enum Status: String {
     case NOT_EXIST = "not_exist";
 }
 
+enum MemarkoError: Int {
+    case ServerNotRespose = 0
+    case ServerTimeout = 1
+    case ProcessingError = 2
+
+}
+
 struct SendFondResponse: Decodable {
     let task_id: String
 }
@@ -29,13 +36,29 @@ class Memarko {
     private let endpoint = "http://84.201.175.166:8080"
     private var sticketSet = StickerSet(software: "Memarko", isAnimated: true)
 
+    var photo: UIImage
     var loading = false
     var taskId: String?
     var links: [String] = []
     var stickerIndex = 0
+    var error: MemarkoError?
     
-    init(image: Data) {
-        sendPhoto(image: image)
+    var photoProgress: Double = 0
+    var processCount: Int = 0
+    var stickersProgress: Double = 0
+    
+    var progress: Int {
+        get {
+            let step1 = Double(20 * photoProgress)
+            let step2 = Double(min(60, Double(processCount) / 25 * 60))
+            let total = step1 + step2
+            return min(Int(total + (100 - total) * stickersProgress), 100)
+        }
+    }
+
+    init(photo: UIImage, preview: UIImage) {
+        self.photo = preview
+        self.sendPhoto(image: photo.jpegData(compressionQuality: 0.9)!)
     }
     
     private func sendPhoto(image: Data) {
@@ -44,10 +67,9 @@ class Memarko {
             multipartFormData.append(image, withName: "photo", fileName: "photo.jpg", mimeType: "image/jpeg")
         }, to: self.endpoint + "/send_photo")
             .uploadProgress { progress in
-                print("Upload Progress: \(progress.fractionCompleted)")
+                self.photoProgress = progress.fractionCompleted
             }
             .responseDecodable(of: SendFondResponse.self) { response in
-                debugPrint(response)
                 self.loading = false
                 if let taskId = response.value?.task_id {
                     self.taskId = taskId
@@ -58,9 +80,21 @@ class Memarko {
     
     private func loadStickers(id: String) {
         AF.request(self.endpoint + "/get_stickers/" + id).responseDecodable(of: StickersResponse.self) { response in
-            debugPrint(response)
-
-            guard let status = response.value?.status else { return }
+            guard let status = response.value?.status else {
+                self.error = .ServerNotRespose
+                return
+            }
+        
+            self.processCount += 1
+            if (self.processCount > 60) {
+                self.error = .ServerTimeout
+                return
+            }
+            
+            if (status == "error") {
+                self.error = .ProcessingError
+                return
+            }
 
             if (status == "processing") {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
@@ -87,16 +121,23 @@ class Memarko {
         }
         
         let stickerUrl = self.links[self.stickerIndex];
-        AF.download(stickerUrl).responseData { response in
-            if let data = response.value {
-                let name = URL(fileURLWithPath: stickerUrl).deletingPathExtension().lastPathComponent
-                let keys = name.components(separatedBy: "~")[2...]
-                let emojis = keys.map { (emoji) -> String in ":\(emoji):".emojiUnescapedString }
-
-                try? self.sticketSet.addSticker(data: .animation(data), emojis: emojis)
-                self.stickerIndex += 1
-                self.loadStickerData()
+        let part = 100 / Double(self.links.count)
+        let prev = self.stickersProgress
+    
+        AF.download(stickerUrl)
+            .downloadProgress { progress in
+                self.stickersProgress = prev + progress.fractionCompleted * part
             }
+            .responseData { response in
+                if let data = response.value {
+                    let name = URL(fileURLWithPath: stickerUrl).deletingPathExtension().lastPathComponent
+                    let keys = name.components(separatedBy: "~")[2...]
+                    let emojis = keys.map { (emoji) -> String in ":\(emoji):".emojiUnescapedString }
+
+                    try? self.sticketSet.addSticker(data: .animation(data), emojis: emojis)
+                    self.stickerIndex += 1
+                    self.loadStickerData()
+                }
         }
     }
 }

@@ -9,6 +9,7 @@ class AppController: UIViewController, UIImagePickerControllerDelegate & UINavig
     private var animationView = AnimationView(name: "StarAnimation")
     private var facesScene = FacesScene()
     private var pastelView = PastelView()
+    private var camera = Camera()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -76,11 +77,7 @@ class AppController: UIViewController, UIImagePickerControllerDelegate & UINavig
         
         let gesture = UITapGestureRecognizer(target: self, action: #selector(self.openCamera))
         animationView.addGestureRecognizer(gesture)
-        
-        let importSticksTap = UITapGestureRecognizer(target: self, action: #selector(self.importPack))
-        pastelView.addGestureRecognizer(importSticksTap)
 
-        
         let faces = SKView()
         faces.frame = view.frame
         facesScene.scaleMode = .resizeFill
@@ -88,45 +85,18 @@ class AppController: UIViewController, UIImagePickerControllerDelegate & UINavig
         faces.ignoresSiblingOrder = true
         faces.allowsTransparency = true
         view.insertSubview(faces, at: 2)
-    }
-    
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        picker.dismiss(animated: true)
-        pastelView.animationDuration = 1.0
-        pastelView.startAnimation()
-        guard let image = info[.editedImage] as? UIImage else {
-            print("No image found")
-            return
-        }
         
-        self.facesScene.addDroplet(image: image)
-        let generator = UINotificationFeedbackGenerator()
-        generator.notificationOccurred(.success)
+        self.camera.onCapture = { (image: UIImage, preview: UIImage) -> Void in
+            let generator = UINotificationFeedbackGenerator()
+            generator.notificationOccurred(.success)
 
-        
-        if let data = image.jpegData(compressionQuality: 0.9) {
-            let memarko = Memarko(image: data)
-            //self.facesScene.addDroplet(image: image)
-            //print(memarko)
+            let memarko = Memarko(photo: image, preview: preview)
+            self.facesScene.addDroplet(memarko: memarko)
         }
-    
-        //self.animationView.isHidden = true
-    }
-    
-    @objc func importPack() {
     }
     
     @objc func openCamera(_ sender: Any) {
-        let vc = UIImagePickerController()
-        vc.sourceType = .camera
-        vc.allowsEditing = true
-        vc.cameraCaptureMode = .photo
-        vc.cameraDevice = .front
-        vc.delegate = self
-        present(vc, animated: true)
-    }
-    
-    func send(_ sender: Any) {
+        present(self.camera, animated: true)
     }
     
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
