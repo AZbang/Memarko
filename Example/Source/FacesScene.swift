@@ -4,10 +4,10 @@ import UIKit
 
 extension SKSpriteNode {
     func drawBorder(color: UIColor, width: CGFloat) {
-        let shapeNode = SKShapeNode(circleOfRadius: size.width/2)
+        let shapeNode = SKShapeNode(circleOfRadius: size.width/2 / xScale)
         shapeNode.fillColor = .clear
         shapeNode.strokeColor = color
-        shapeNode.lineWidth = 40
+        shapeNode.lineWidth = width
         addChild(shapeNode)
     }
 }
@@ -18,23 +18,27 @@ class MemarkoObject {
     var loader: SKLabelNode
     var progress: SKShapeNode
     
+    var scale = 1
+    let colors = [#colorLiteral(red: 0.2365181744, green: 0.3842029572, blue: 1, alpha: 1), #colorLiteral(red: 0.8078431487, green: 0.02745098062, blue: 0.3333333433, alpha: 1), #colorLiteral(red: 0.9607843161, green: 0.7058823705, blue: 0.200000003, alpha: 1), #colorLiteral(red: 0.4666666687, green: 0.7647058964, blue: 0.2666666806, alpha: 1), #colorLiteral(red: 0.2392156869, green: 0.6745098233, blue: 0.9686274529, alpha: 1), #colorLiteral(red: 1, green: 0.293546468, blue: 0.8182056546, alpha: 1)]
+    
     init(scene: SKScene, memarko: Memarko) {
         self.memarko = memarko
         
         let value = Int.random(in: 80..<130)
         let size = CGSize(width: value, height: value)
         let texture = SKTexture(image: memarko.photo.circleMasked()!)
-        
         sprite = SKSpriteNode(texture: texture)
+        sprite.scale(to: size)
+
         sprite.position = CGPoint(x: scene.frame.width/2, y: scene.frame.height/2)
-        sprite.drawBorder(color: #colorLiteral(red: 0.2365181744, green: 0.3842029572, blue: 1, alpha: 1), width: 4)
+        sprite.drawBorder(color: colors.randomElement()!, width: 10 / sprite.xScale)
         sprite.zPosition = 1
 
         self.loader = SKLabelNode(text: "0%")
         self.loader.zPosition = 4
         self.loader.horizontalAlignmentMode = .center
         self.loader.verticalAlignmentMode = .center
-        self.loader.fontSize = 120
+        self.loader.fontSize = 20 / sprite.xScale
         self.loader.fontName = "Futura"
         self.loader.fontColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
         sprite.addChild(self.loader)
@@ -48,8 +52,7 @@ class MemarkoObject {
         self.progress.yScale += 0.1
         //sprite.addChild(self.progress)
         
-        sprite.scale(to:size)
-        sprite.physicsBody = SKPhysicsBody(circleOfRadius: size.width/2)
+        sprite.physicsBody = SKPhysicsBody(circleOfRadius: size.width/2 + 5)
         sprite.physicsBody?.isDynamic = true
         sprite.physicsBody?.allowsRotation = true
         sprite.physicsBody?.restitution = 0.7
