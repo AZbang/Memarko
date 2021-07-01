@@ -45,9 +45,9 @@ public extension FaceCropper where T: CGImage {
         let height = face.boundingBox.height * CGFloat(self.detectable.height)
         let x = face.boundingBox.origin.x * CGFloat(self.detectable.width)
         let y = (1 - face.boundingBox.origin.y) * CGFloat(self.detectable.height) - height
-        let pad: CGFloat = max(width, height) * 0.5
+        let pad: CGFloat = max(width, height) * 0.7
 
-        let croppingRect = CGRect(x: x - pad, y: y - pad*1.5, width: width + pad*2, height: height + pad*2)
+        let croppingRect = CGRect(x: x - pad, y: y - pad*2, width: width + pad*2, height: height + pad*2)
         let image = smartCrop(image: self.detectable, crop: croppingRect)
         
         return image?.cgImage

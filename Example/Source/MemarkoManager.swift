@@ -86,6 +86,7 @@ class Memarko {
                 if let taskId = response.value?.task_id {
                     self.taskId = taskId
                     self.loadStickers(id: taskId)
+                    print(taskId)
                 }
             }
     }
