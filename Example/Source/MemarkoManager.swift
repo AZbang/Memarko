@@ -32,8 +32,13 @@ struct StickersResponse: Decodable {
     let download_links: [String]?
 }
 
+func documentDirectoryPath() -> URL? {
+    let path = FileManager.default.urls(for: .picturesDirectory, in: .userDomainMask)
+    return path.first
+}
+
 class Memarko {
-    private let endpoint = "http://84.201.175.166:8080"
+    private let endpoint = "http://178.154.203.83:8080"
     private var sticketSet = StickerSet(software: "Memarko", isAnimated: true)
 
     var photo: UIImage
@@ -50,7 +55,7 @@ class Memarko {
     var progress: Int {
         get {
             let step1 = Double(20 * photoProgress)
-            let step2 = Double(min(60, Double(processCount) / 25 * 60))
+            let step2 = Double(min(60, Double(processCount) / 5 * 60))
             let total = step1 + step2
             return min(Int(total + (100 - total) * stickersProgress), 100)
         }
@@ -58,19 +63,26 @@ class Memarko {
 
     init(photo: UIImage, preview: UIImage) {
         self.photo = preview
-        self.sendPhoto(image: photo.jpegData(compressionQuality: 0.9)!)
+        self.sendPhoto(image: preview.jpegData(compressionQuality: 0.9)!)
+    }
+    
+    public func shareStickers() {
+        if (self.loading) { return }
+        try? self.sticketSet.import()
+        let generator = UINotificationFeedbackGenerator()
+        generator.notificationOccurred(.success)
     }
     
     private func sendPhoto(image: Data) {
         self.loading = true
         AF.upload(multipartFormData: { multipartFormData in
             multipartFormData.append(image, withName: "photo", fileName: "photo.jpg", mimeType: "image/jpeg")
+            multipartFormData.append("true".data(using: .utf8)!, withName: "cropped")
         }, to: self.endpoint + "/send_photo")
             .uploadProgress { progress in
                 self.photoProgress = progress.fractionCompleted
             }
             .responseDecodable(of: SendFondResponse.self) { response in
-                self.loading = false
                 if let taskId = response.value?.task_id {
                     self.taskId = taskId
                     self.loadStickers(id: taskId)
@@ -114,9 +126,8 @@ class Memarko {
     
     private func loadStickerData() {
         if (self.stickerIndex >= self.links.count) {
-            try? self.sticketSet.import()
-            let generator = UINotificationFeedbackGenerator()
-            generator.notificationOccurred(.success)
+            self.loading = false
+            self.shareStickers()
             return
         }
         
