@@ -23,7 +23,7 @@ class MemarkoObject: SKSpriteNode {
     convenience init(scene: SKScene, memarko: Memarko) {
         let value = Int.random(in: 80..<130)
         let size = CGSize(width: value, height: value)
-        let texture = SKTexture(image: memarko.photo)
+        let texture = SKTexture(image: memarko.photo.circleMasked()!)
 
         self.init(texture: texture)
         self.memarko = memarko

@@ -63,7 +63,7 @@ class Memarko {
 
     init(photo: UIImage, preview: UIImage) {
         self.photo = preview
-        self.sendPhoto(image: preview.jpegData(compressionQuality: 0.9)!)
+        self.sendPhoto(image: photo.jpegData(compressionQuality: 0.9)!)
     }
     
     public func shareStickers() {

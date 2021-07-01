@@ -55,31 +55,6 @@ extension UILabel {
     }
 }
 
-func smartCrop(image: CGImage, crop: CGRect) -> UIImage? {
-    let cx = max(crop.minX, 0)
-    let cy = max(crop.minY, 0)
-    let cw = min(crop.width, CGFloat(image.width))
-    let ch = min(crop.height, CGFloat(image.height))
-    print(crop, CGRect(x: cx, y: cy, width: cw, height: ch))
-    let cropped = UIImage(cgImage: (image.cropping(to: CGRect(x: cx, y: cy, width: cw, height: ch)))!)
-    
-    let x = (crop.width - cropped.size.width) / 2
-    let y = (crop.height - cropped.size.height) / 2
-
-    // Actually do the resizing to the rect using the ImageContext stuff
-    UIGraphicsBeginImageContextWithOptions(CGSize(width: crop.width, height: crop.height), true, 1.0)
-    cropped.draw(in: CGRect(x: x, y: y, width: cropped.size.width, height: cropped.size.height))
-    let newImage = UIGraphicsGetImageFromCurrentImageContext()
-    UIGraphicsEndImageContext()
-    
-    UIGraphicsBeginImageContextWithOptions(CGSize(width: 512, height: 512), false, 1.0)
-    newImage!.draw(in: CGRect(x: 0, y: 0, width: 512, height: 512))
-    let resized = UIGraphicsGetImageFromCurrentImageContext()
-    UIGraphicsEndImageContext()
-    
-    return resized
-}
-
 func dataSize(_ data: Data) {
       print("There were \(data.count) bytes")
       let bcf = ByteCountFormatter()
