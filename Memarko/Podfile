@@ -1,0 +1,15 @@
+use_frameworks!
+
+target 'Memarko' do
+  platform :ios, '10.0'
+
+  pod "Pastel"
+  pod 'Emoji-swift'
+  pod 'lottie-ios'
+  pod 'Alamofire', '~> 5.4'
+  pod 'TelegramStickersImport', :path => '../TelegramStickersImport'
+
+  # In production, you should use:
+  # pod 'TelegramStickersImport'
+
+end
